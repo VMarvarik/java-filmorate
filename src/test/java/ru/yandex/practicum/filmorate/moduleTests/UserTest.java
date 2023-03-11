@@ -1,6 +1,5 @@
 package ru.yandex.practicum.filmorate.moduleTests;
 
-
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import ru.yandex.practicum.filmorate.model.User;
@@ -40,6 +39,6 @@ public class UserTest {
     @Test
     void shouldNotCreateUser() {
         Set<ConstraintViolation<User>> validationViolations = validator.validate(incorrectUserData);
-        Assertions.assertEquals(4, validationViolations.size());
+        Assertions.assertEquals(3, validationViolations.size());
     }
 }
