@@ -8,7 +8,6 @@ import lombok.extern.slf4j.Slf4j;
 import ru.yandex.practicum.filmorate.validation.customAnnotation.NoSpaces;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Past;
 import java.time.LocalDate;
 
@@ -18,19 +17,16 @@ import java.time.LocalDate;
 public class User {
     private int id;
 
-    @NotNull(message = "email не может быть null")
-    @NotBlank(message = "email не может быть пустым")
+    @NotBlank(message = "email не может быть пустым или null")
     @Email(message = "Неправильный формат email")
     private String email;
 
-    @NotNull(message = "login не может быть null")
-    @NotBlank(message = "login не может быть пустым")
+    @NotBlank(message = "login не может быть пустым или null")
     @NoSpaces(message = "login не может содержать пробелы")
     private String login;
 
     private String name;
 
-    @NotNull(message = "birthday не может быть null")
     @Past(message = "birthday не может быть в будущем")
     private LocalDate birthday;
 
