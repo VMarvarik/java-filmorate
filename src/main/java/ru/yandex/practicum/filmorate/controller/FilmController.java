@@ -14,7 +14,7 @@ import java.util.HashMap;
 @RequestMapping("/films")
 public class FilmController {
 
-    private HashMap<Integer, Film> filmHashMap = new HashMap<>();
+    private final HashMap<Integer, Film> filmHashMap = new HashMap<>();
     private int id = 0;
     @PostMapping
     public Film addFilm(@Valid @RequestBody Film film) {
