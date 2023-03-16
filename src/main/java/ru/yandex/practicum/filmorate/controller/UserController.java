@@ -1,42 +1,63 @@
 package ru.yandex.practicum.filmorate.controller;
 
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.service.user.UserService;
 import javax.validation.Valid;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Collection;
 
 @RestController
 @Slf4j
 @RequestMapping("/users")
+@RequiredArgsConstructor
 public class UserController {
-    private final HashMap<Integer, User> userHashMap = new HashMap<>();
-    private int id = 0;
+    private final UserService userService;
 
     @PostMapping
     public User createUser(@Valid @RequestBody User user) {
-        user.setId(++id);
-        userHashMap.put(user.getId(), user);
-        return user;
+        return userService.createUser(user);
     }
 
     @PutMapping
     public User updateUser(@Valid @RequestBody User user) {
-        if (userHashMap.containsKey(user.getId())) {
-            userHashMap.put(user.getId(), user);
-            log.debug("Пользователь {} был обновлен", user.getId());
-            return user;
-        }
-        throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        return userService.updateUser(user);
+    }
+
+    @DeleteMapping
+    public void deleteUser(@PathVariable Long id) {
+        userService.deleteUser(id);
     }
 
     @GetMapping
-    public ArrayList<User> getAllUsers() {
-        log.debug("Текущее количество пользователей: {}", userHashMap.size());
-        return new ArrayList<>(userHashMap.values());
+    public Collection<User> getAllUsers() {
+        return userService.getAllUsers();
+    }
+
+    @GetMapping(value = "/{id}")
+    public User getUserById(@Valid @PathVariable Long id) {
+        return userService.getUserById(id);
+    }
+
+    @GetMapping(value = "/{id}/friends" )
+    public Collection<User> getFriends(@Valid @PathVariable Long id) {
+        return userService.getListOfFriends(id);
+    }
+
+    @GetMapping(value = "/{id}/friends/common/{userId}")
+    public Collection<User> getMutualFriends(@Valid @PathVariable Long id, @Valid @PathVariable Long userId) {
+        return userService.getListOfMutualFriends(id, userId);
+    }
+
+    @PutMapping(value = "/{id}/friends/{userId}")
+    public void addFriend(@Valid @PathVariable Long id, @Valid @PathVariable Long userId) {
+        userService.addFriend(id, userId);
+    }
+
+    @DeleteMapping(value = "/{id}/friends/{userId}")
+    public void removeFriend(@Valid @PathVariable Long id, @Valid @PathVariable Long userId) {
+        userService.removeFriend(id, userId);
     }
 }
