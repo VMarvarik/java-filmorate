@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.film.FilmService;
@@ -9,6 +10,7 @@ import java.util.Collection;
 
 @RestController
 @RequiredArgsConstructor
+@Slf4j
 @RequestMapping("/films")
 public class FilmController {
     private final FilmService filmService;
@@ -41,11 +43,13 @@ public class FilmController {
     @PutMapping(value = "/{id}/like/{userId}")
     public void addLike(@Valid @PathVariable Long id, @Valid @PathVariable Long userId) {
         filmService.addLike(id, userId);
+        log.debug("Like is added");
     }
 
     @DeleteMapping(value = "/{id}/like/{userId}")
     public void removeLike(@Valid @PathVariable Long id, @Valid @PathVariable Long userId) {
         filmService.removeLike(id, userId);
+        log.debug("Like is removed");
     }
 
     @GetMapping(value = "/popular")
