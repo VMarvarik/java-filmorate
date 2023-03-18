@@ -18,28 +18,28 @@ public class FilmService {
     private final UserStorage userStorage;
 
     public Film addFilm(Film film) {
-        return filmStorage.addFilm(film);
+        return filmStorage.add(film);
     }
 
     public Film updateFilm(Film film) {
-        return filmStorage.updateFilm(film);
+        return filmStorage.update(film);
     }
 
     public Film getFilmById(Long id) {
-        return filmStorage.getFilmById(id);
+        return filmStorage.getById(id);
     }
 
     public void deleteFilm(Long id) {
-        filmStorage.deleteFilm(id);
+        filmStorage.delete(id);
     }
 
     public Collection<Film> getAllFilms() {
-        return filmStorage.getAllFilms();
+        return filmStorage.getAll();
     }
 
     public void addLike(Long id, Long userId) {
         if (containsFilm(id) && containsUser(userId)) {
-            filmStorage.getFilmHashMap().get(id).getLikes().add(userId);
+            filmStorage.getById(id).getLikes().add(userId);
         } else {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
@@ -47,7 +47,7 @@ public class FilmService {
 
     public void removeLike(Long id, Long userId) {
         if (containsFilm(id) && containsUser(userId)) {
-            filmStorage.getFilmHashMap().get(id).getLikes().remove(userId);
+            filmStorage.getById(id).getLikes().remove(userId);
         } else {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
@@ -62,10 +62,10 @@ public class FilmService {
     }
 
     private boolean containsUser(Long id) {
-        return userStorage.getUserHashMap().containsKey(id);
+        return userStorage.contains(id);
     }
 
     private boolean containsFilm(Long id) {
-        return filmStorage.getFilmHashMap().containsKey(id);
+        return filmStorage.contains(id);
     }
 }
