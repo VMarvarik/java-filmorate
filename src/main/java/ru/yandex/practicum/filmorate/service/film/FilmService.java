@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.service.film;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -12,6 +13,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class FilmService {
 
     private final FilmStorage filmStorage;
@@ -38,17 +40,29 @@ public class FilmService {
     }
 
     public void addLike(Long id, Long userId) {
-        if (containsFilm(id) && containsUser(userId)) {
-            filmStorage.getById(id).getLikes().add(userId);
+        if (containsFilm(id)) {
+            if (containsUser(userId)) {
+                filmStorage.getById(id).getLikes().add(userId);
+            } else {
+                log.info("Пользователь " + userId + " не найден");
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+            }
         } else {
+            log.info("Фильм " + id + " не найден");
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
     }
 
     public void removeLike(Long id, Long userId) {
-        if (containsFilm(id) && containsUser(userId)) {
-            filmStorage.getById(id).getLikes().remove(userId);
+        if (containsFilm(id)) {
+            if (containsUser(userId)) {
+                filmStorage.getById(id).getLikes().remove(userId);
+            } else {
+                log.info("Пользователь " + userId + " не найден");
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+            }
         } else {
+            log.info("Фильм " + id + " не найден");
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
     }

@@ -17,49 +17,58 @@ public class UserController {
 
     @PostMapping
     public User createUser(@Valid @RequestBody User user) {
+        log.info("Создание пользователя...");
         return userService.createUser(user);
     }
 
     @PutMapping
     public User updateUser(@Valid @RequestBody User user) {
+        log.info("Обновление пользователя " + user.getId() + "...");
         return userService.updateUser(user);
     }
 
     @DeleteMapping
     public void deleteUser(@PathVariable Long id) {
+        log.info("Удаление пользователя...");
         userService.deleteUser(id);
-        log.debug("User is deleted");
+        log.info("Пользователь удален");
     }
 
     @GetMapping
     public Collection<User> getAllUsers() {
+        log.info("Вызов всех пользователей...");
         return userService.getAllUsers();
     }
 
     @GetMapping(value = "/{id}")
     public User getUserById(@Valid @PathVariable Long id) {
+        log.info("Вызов пользователя по ID:" + id + "...");
         return userService.getUserById(id);
     }
 
     @GetMapping(value = "/{id}/friends" )
     public Collection<User> getFriends(@Valid @PathVariable Long id) {
+        log.info("Вызов друзей пользователя" + id + "...");
         return userService.getListOfFriends(id);
     }
 
     @GetMapping(value = "/{id}/friends/common/{userId}")
     public Collection<User> getMutualFriends(@Valid @PathVariable Long id, @Valid @PathVariable Long userId) {
+        log.info("Вызов взаимных друзей пользователя " + id + " и пользователя " + userId + "...");
         return userService.getListOfMutualFriends(id, userId);
     }
 
     @PutMapping(value = "/{id}/friends/{userId}")
     public void addFriend(@Valid @PathVariable Long id, @Valid @PathVariable Long userId) {
+        log.info("Добавление друга " + id + "...");
         userService.addFriend(id, userId);
-        log.debug("Friend is added");
+        log.info("Друг добавлен");
     }
 
     @DeleteMapping(value = "/{id}/friends/{userId}")
     public void removeFriend(@Valid @PathVariable Long id, @Valid @PathVariable Long userId) {
+        log.info("Добавление друга " + id + "...");
         userService.removeFriend(id, userId);
-        log.debug("Friend is deleted");
+        log.info("Друг удален");
     }
 }
