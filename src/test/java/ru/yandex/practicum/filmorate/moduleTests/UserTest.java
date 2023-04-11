@@ -12,7 +12,7 @@ import java.util.Set;
 
 public class UserTest {
     private final User correctUserData = User.builder()
-            .id(1)
+            .id(1L)
             .login("varya22")
             .name("Varya varya")
             .email("mail@mail.ru")
@@ -20,7 +20,7 @@ public class UserTest {
             .build();
 
     private final User incorrectUserData = User.builder()
-            .id(1)
+            .id(1L)
             .login(" ")
             .name("Varya varya")
             .email("mail@/////.")
