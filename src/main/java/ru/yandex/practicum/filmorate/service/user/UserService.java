@@ -21,11 +21,19 @@ public class UserService {
     }
 
     public User updateUser(User user) {
-        return userStorage.update(user);
+        if (contains(user.getId())) {
+            return userStorage.update(user);
+        }
+        log.info("User с id " + user.getId() + " не найден");
+        throw new ResponseStatusException(HttpStatus.NOT_FOUND);
     }
 
     public void deleteUser(Long id) {
-        userStorage.delete(id);
+        if (contains(id)) {
+            userStorage.delete(id);
+        }
+        log.info("User с id " + id + " не найден");
+        throw new ResponseStatusException(HttpStatus.NOT_FOUND);
     }
 
     public Collection<User> getAllUsers() {
@@ -33,16 +41,17 @@ public class UserService {
     }
 
     public User getUserById(Long id) {
-        return userStorage.getById(id);
+        if (contains(id)) {
+            return userStorage.getById(id);
+        }
+        log.info("User с id " + id + " не найден");
+        throw new ResponseStatusException(HttpStatus.NOT_FOUND);
     }
 
     public void addFriend(Long id, Long friendId) {
         if (contains(id)) {
             if (contains(friendId)) {
-                final User user = getUserById(id);
-                final User friend = getUserById(friendId);
-                user.getFriends().add(friend.getId());
-                friend.getFriends().add(user.getId());
+                userStorage.addFriend(id, friendId);
             } else {
                 log.info("Пользователь " + friendId + " не найден");
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND);
@@ -56,10 +65,7 @@ public class UserService {
     public void removeFriend(Long id, Long friendId) {
         if (contains(id)) {
             if (contains(friendId)) {
-                final User user = getUserById(id);
-                final User friend = getUserById(friendId);
-                user.getFriends().remove(friend.getId());
-                friend.getFriends().remove(user.getId());
+                userStorage.removeFriend(id, friendId);
             } else {
                 log.info("Пользователь " + friendId + " не найден");
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND);
@@ -71,30 +77,17 @@ public class UserService {
     }
 
     public Collection<User> getListOfFriends(Long id) {
-        final ArrayList<User> friends = new ArrayList<>();
         if (contains(id)) {
-            final Set<Long> friendIds = getUserById(id).getFriends();
-            for (Long friendId : friendIds) {
-                friends.add(getUserById(friendId));
-            }
-            return friends;
+            return userStorage.getFriends(id);
         }
         log.info("Пользователь " + id + " не найден");
         throw new ResponseStatusException(HttpStatus.NOT_FOUND);
     }
 
     public Collection<User> getListOfMutualFriends(Long id, Long otherId) {
-        final ArrayList<User> mutualFriends = new ArrayList<>();
         if (contains(id)) {
             if (contains(otherId)) {
-                final Set<Long> userFriends = getUserById(id).getFriends();
-                final Set<Long> otherUserFriends = getUserById(otherId).getFriends();
-                final Set<Long> mutualFriendIds = new HashSet<>(userFriends);
-                mutualFriendIds.retainAll(otherUserFriends);
-                for (Long friendId : mutualFriendIds) {
-                    mutualFriends.add(getUserById(friendId));
-                }
-                return mutualFriends;
+                return userStorage.getCommonFriends(id, otherId);
             } else {
                 log.info("Пользователь " + otherId + " не найден");
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND);
@@ -105,6 +98,6 @@ public class UserService {
     }
 
     private boolean contains(Long id) {
-        return userStorage.contains(id);
+        return userStorage.getUsersMap().containsKey(id);
     }
 }

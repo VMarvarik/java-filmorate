@@ -8,5 +8,4 @@ public interface Storage<T> {
     T getById(Long id);
     void delete(Long id);
     Collection<T> getAll();
-    Boolean contains(Long id);
 }
