@@ -35,7 +35,6 @@ public class Film {
     private Rating rating;
 
     @Builder.Default
-        
     private Set<Genre> genres = new HashSet<>();
     
     private Set<Integer> likes;
