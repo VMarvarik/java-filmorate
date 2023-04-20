@@ -9,6 +9,7 @@ import javax.validation.constraints.Size;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
+
 @Data
 @Builder
 @AllArgsConstructor
@@ -34,6 +35,7 @@ public class Film {
     private Rating rating;
 
     @Builder.Default
+        
     private Set<Genre> genres = new HashSet<>();
     
     private Set<Integer> likes;
