@@ -33,7 +33,7 @@ public class GenresDbStorage implements GenresStorage {
             return null;
         }
         Genre genre = null;
-        String sqlQueryGetById = "select * from genreNames where genreId=?";
+        String sqlQueryGetById = "SELECT * FROM genreNames WHERE genreId=?";
         try {
             genre = jdbcTemplate.queryForObject(sqlQueryGetById, this::rowMapToGenre, genreId);
         } catch (EmptyResultDataAccessException e) {
@@ -45,7 +45,7 @@ public class GenresDbStorage implements GenresStorage {
     @Override
     public List<Genre> getAllGenres() {
         List<Genre> genres = new ArrayList<>();
-        String sqlQueryGetAllGenres = "select * from genreNames";
+        String sqlQueryGetAllGenres = "SELECT * FROM genreNames";
         try {
             genres = jdbcTemplate.query(sqlQueryGetAllGenres, this::rowMapToGenre);
         } catch (EmptyResultDataAccessException e) {
@@ -57,9 +57,9 @@ public class GenresDbStorage implements GenresStorage {
     @Override
     public Set<Genre> getGenresOfFilm(Long filmId) {
         Set<Genre> genres = new LinkedHashSet<>();
-        String sqlQueryGetGenres = "select gn.genreId, gn.genre " +
-                "from genre g left join genreNames gn on g.genreId = gn.genreId " +
-                " where g.filmId = ?";
+        String sqlQueryGetGenres = "SELECT gn.genreId, gn.genre " +
+                "FROM genre g LEFT JOIN genreNames gn ON g.genreId = gn.genreId " +
+                "WHERE g.filmId = ?";
         try {
             genres.addAll(jdbcTemplate.query(sqlQueryGetGenres, this::rowMapToGenre, filmId));
         } catch (EmptyResultDataAccessException e) {
@@ -70,20 +70,7 @@ public class GenresDbStorage implements GenresStorage {
 
     @Override
     public void createGenre(Genre genre) {
-        String sqlQueryCreateGenre = "insert into genreNames(genre) values(?)";
+        String sqlQueryCreateGenre = "INSERT INTO genreNames(genre) values(?)";
         jdbcTemplate.update(sqlQueryCreateGenre, genre.getName());
-    }
-
-    @Override
-    public Boolean containsGenre(Integer genreId) {
-        String sqlQueryContainsGenre = "select count(*) from genreNames where genreId = ?";
-        int containsGenre = 0;
-        try {
-            containsGenre = jdbcTemplate.queryForObject(sqlQueryContainsGenre, Integer.class, genreId);
-        } catch (EmptyResultDataAccessException e) {
-            log.info("В базе нет информации по запросу {}.  genreId={}",
-                    sqlQueryContainsGenre, genreId);
-        }
-        return containsGenre > 0;
     }
 }

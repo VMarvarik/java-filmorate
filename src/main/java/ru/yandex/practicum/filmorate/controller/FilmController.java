@@ -7,6 +7,7 @@ import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.film.FilmService;
 import javax.validation.Valid;
 import java.util.Collection;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -61,7 +62,7 @@ public class FilmController {
     }
 
     @GetMapping(value = "/popular")
-    public Collection<Film> getPopular
+    public List<Film> getPopular
             (@RequestParam(value = "count", required = false, defaultValue = "10") Integer count) {
         log.info("Вызов популярных фильмов...");
         return filmService.getPopularFilms(count);

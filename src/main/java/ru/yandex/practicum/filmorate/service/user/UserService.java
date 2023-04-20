@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
-
 import java.util.*;
 
 @Service
@@ -22,7 +21,7 @@ public class UserService {
 
     public User updateUser(User user) {
         if (contains(user.getId())) {
-            return userStorage.update(user);
+            return userStorage.update(user).get();
         }
         log.info("User с id " + user.getId() + " не найден");
         throw new ResponseStatusException(HttpStatus.NOT_FOUND);
@@ -42,7 +41,7 @@ public class UserService {
 
     public User getUserById(Long id) {
         if (contains(id)) {
-            return userStorage.getById(id);
+            return userStorage.getById(id).get();
         }
         log.info("User с id " + id + " не найден");
         throw new ResponseStatusException(HttpStatus.NOT_FOUND);

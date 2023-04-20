@@ -28,7 +28,7 @@ public class UserDbStorageTest {
                 .login("login")
                 .birthday(LocalDate.of(2023, 1, 1))
                 .build();
-        if (userStorage.getById(1L) != null) {
+        if (userStorage.getById(1L).isPresent()) {
             userStorage.add(userBeforeEach);
             return;
         }
@@ -47,7 +47,7 @@ public class UserDbStorageTest {
 
     @Test
     public void getById() {
-        Optional<User> userOptional = Optional.ofNullable(userStorage.getById(1L));
+        Optional<User> userOptional = userStorage.getById(1L);
         assertThat(userOptional)
                 .isPresent()
                 .hasValueSatisfying(user ->
@@ -59,10 +59,9 @@ public class UserDbStorageTest {
 
     @Test
     public void getByIdFail() {
-        Optional<User> userOptional = Optional.ofNullable(userStorage.getById(3L));
+        Optional<User> userOptional = userStorage.getById(3L);
         assertThat(userOptional)
-                .isNotPresent()
-        ;
+                .isNotPresent();
     }
 
     @Test
@@ -75,7 +74,7 @@ public class UserDbStorageTest {
                 .birthday(LocalDate.of(2020, 1, 1))
                 .build();
         userStorage.update(userTestUpdate);
-        Optional<User> userOptional = Optional.ofNullable(userStorage.getById(1L));
+        Optional<User> userOptional = userStorage.getById(1L);
         assertThat(userOptional)
                 .isPresent()
                 .hasValueSatisfying(user ->
@@ -92,7 +91,7 @@ public class UserDbStorageTest {
                 .birthday(LocalDate.of(2020, 1, 1))
                 .build();
         userStorage.update(userTestUpdate);
-        Optional<User> userOptional = Optional.ofNullable(userStorage.getById(2L));
+        Optional<User> userOptional = userStorage.getById(2L);
         assertThat(userOptional)
                 .isNotPresent();
     }
@@ -107,7 +106,7 @@ public class UserDbStorageTest {
                 .build();
         userStorage.add(userTestDelete);
         userStorage.delete(userTestDelete.getId());
-        Optional<User> userOptional = Optional.ofNullable(userStorage.getById(2L));
+        Optional<User> userOptional = userStorage.getById(2L);
         assertThat(userOptional).isNotPresent();
     }
 
@@ -117,7 +116,7 @@ public class UserDbStorageTest {
                 .id(2L)
                 .build();
         userStorage.delete(userTestDelete.getId());
-        Optional<User> userOptional = Optional.ofNullable(userStorage.getById(1L));
+        Optional<User> userOptional = userStorage.getById(1L);
         assertThat(userOptional).isPresent();
     }
 

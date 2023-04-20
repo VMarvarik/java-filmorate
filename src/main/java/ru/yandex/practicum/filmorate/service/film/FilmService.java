@@ -6,14 +6,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.likes.LikesStorage;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -31,16 +27,7 @@ public class FilmService {
 
     public Film updateFilm(Film film) {
         if (containsFilm(film.getId())) {
-            if (film.getGenres() != null) {
-                List<Genre> newGenres = film.getGenres().stream()
-                        .collect(Collectors.collectingAndThen(Collectors.toList(), lst -> {
-                            Collections.reverse(lst);
-                            return lst.stream();
-                        }))
-                        .collect(Collectors.toList());
-                film.setGenres(new HashSet<>(newGenres));
-            }
-            return filmStorage.update(film);
+            return filmStorage.update(film).get();
         }
         log.info("Фильм " + film.getId() + " не найден");
         throw new ResponseStatusException(HttpStatus.NOT_FOUND);
@@ -48,7 +35,7 @@ public class FilmService {
 
     public Film getFilmById(Long id) {
         if (containsFilm(id)) {
-            return filmStorage.getById(id);
+            return filmStorage.getById(id).get();
         }
         log.info("Фильм " + id + " не найден");
         throw new ResponseStatusException(HttpStatus.NOT_FOUND);
@@ -94,7 +81,7 @@ public class FilmService {
         }
     }
 
-    public Collection<Film> getPopularFilms(Integer count) {
+    public List<Film> getPopularFilms(Integer count) {
         return likesStorage.getTopFilmLikes().
                 stream().
                 limit(count).
@@ -107,6 +94,6 @@ public class FilmService {
     }
 
     private boolean containsFilm(Long id) {
-        return filmStorage.getFilmMap().containsKey(id);
+        return filmStorage.getById(id).isPresent();
     }
 }

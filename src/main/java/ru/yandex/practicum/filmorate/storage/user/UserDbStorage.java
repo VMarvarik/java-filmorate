@@ -1,7 +1,7 @@
 package ru.yandex.practicum.filmorate.storage.user;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCreator;
@@ -16,14 +16,10 @@ import java.util.*;
 
 @Slf4j
 @Component("UserDbStorage")
+@RequiredArgsConstructor
 public class UserDbStorage implements UserStorage {
 
     private final JdbcTemplate jdbcTemplate;
-
-    @Autowired
-    public UserDbStorage(JdbcTemplate jdbcTemplate) {
-        this.jdbcTemplate = jdbcTemplate;
-    }
 
     private User rowMapToUser(ResultSet resultSet, int i) throws SQLException {
         LocalDate birthday;
@@ -41,12 +37,6 @@ public class UserDbStorage implements UserStorage {
                 .build();
     }
 
-    private Map<Long, Boolean> rowMapToFriends(ResultSet resultSet, int i) throws SQLException {
-        var statuses = new HashMap<Long, Boolean>();
-        statuses.put(resultSet.getLong("friendsId"), resultSet.getBoolean("status"));
-        return statuses;
-    }
-
     @Override
     public User add(User user) {
         if (user == null){
@@ -55,7 +45,7 @@ public class UserDbStorage implements UserStorage {
         if (user.getName() == null || user.getName().isBlank()) {
             user.setName(user.getLogin());
         }
-        String sqlQueryToUsers = "insert into users(email,login,name,birthday) values (?,?,?,?)";
+        String sqlQueryToUsers = "INSERT INTO users (email, login, name, birthday) VALUES (?,?,?,?)";
         PreparedStatementCreator psc = con -> {
             PreparedStatement ps = con.prepareStatement(sqlQueryToUsers, Statement.RETURN_GENERATED_KEYS);
             ps.setString(1, user.getEmail());
@@ -71,35 +61,33 @@ public class UserDbStorage implements UserStorage {
     }
 
     @Override
-    public User update(User user) {
+    public Optional<User> update(User user) {
         if (user == null){
             throw new NullException("Пользователь не может быть null");
         }
-
         String name;
         if (user.getName() == null || user.getName().isBlank()) {
             name = user.getLogin();
         } else {
             name = user.getName();
         }
-        String sqlQueryUpdate = "update users " +
-                "set email = ?, login = ?, name = ?, birthday = ?" +
-                "where id = ?";
+        String sqlQueryUpdate = "UPDATE users " +
+                "SET email = ?, login = ?, name = ?, birthday = ?" +
+                "WHERE id = ?";
         jdbcTemplate.update(sqlQueryUpdate,
                 user.getEmail(),
                 user.getLogin(),
                 name,
                 user.getBirthday(),
                 user.getId());
-        return user;
+        return Optional.of(user);
     }
 
     @Override
     public void delete(Long id) {
-        String sqlQueryDelete = "delete from users where id = ?";
+        String sqlQueryDelete = "DELETE FROM users WHERE id = ?";
         try {
-            jdbcTemplate.update(sqlQueryDelete,
-                    id);
+            jdbcTemplate.update(sqlQueryDelete, id);
         } catch (EmptyResultDataAccessException e) {
             log.info("В базе нет информации по запросу {}", sqlQueryDelete);
         }
@@ -107,7 +95,7 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public List<User> getAll() {
-        String sqlQueryGetAll = "select * from users";
+        String sqlQueryGetAll = "SELECT * FROM users";
         List<User> users = new ArrayList<>();
         try {
             users = jdbcTemplate.query(sqlQueryGetAll, this::rowMapToUser);
@@ -118,20 +106,21 @@ public class UserDbStorage implements UserStorage {
     }
 
     @Override
-    public User getById(Long id) {
-        String sqlQueryGetById = "select * from users where id = ?";
+    public Optional<User> getById(Long id) {
+        String sqlQueryGetById = "SELECT * FROM users WHERE id = ?";
         User user = null;
         try {
             user = jdbcTemplate.queryForObject(sqlQueryGetById, this::rowMapToUser, id);
         } catch (EmptyResultDataAccessException e) {
             log.info("В базе нет информации по запросу {}.  id={}", sqlQueryGetById, id);
+            return Optional.empty();
         }
-        return user;
+        return Optional.ofNullable(user);
     }
 
     @Override
     public Map<Long, User> getUsersMap() {
-        String sqlQueryUsersMap = "select * from users";
+        String sqlQueryUsersMap = "SELECT * FROM users";
         List<User> userMap = jdbcTemplate.query(sqlQueryUsersMap, this::rowMapToUser);
         Map<Long, User> result = new HashMap<>();
         for (User user : userMap) {
@@ -142,8 +131,8 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public void addFriend(Long userId, Long idFriend) {
-        String sqlQueryAddFriend = "insert into userFriends(userId,friendsId,status) values (?,?,?)";
-        jdbcTemplate.update(sqlQueryAddFriend, userId, idFriend, false);
+        String sqlQueryAddFriend = "MERGE INTO userFriends(userId, friendsId) VALUES (?,?)";
+        jdbcTemplate.update(sqlQueryAddFriend, userId, idFriend);
     }
 
     @Override
@@ -151,7 +140,7 @@ public class UserDbStorage implements UserStorage {
         if (id == null || idRemoveFriend == null || id.equals(idRemoveFriend)) {
             return;
         }
-        String sqlQueryRemoveFriend = "delete from userFriends t where t.userId = ? and t.friendsId = ?";
+        String sqlQueryRemoveFriend = "DELETE FROM userFriends f WHERE f.userId = ? AND f.friendsId = ?";
         try {
             jdbcTemplate.update(sqlQueryRemoveFriend, id, idRemoveFriend);
         } catch (EmptyResultDataAccessException e) {
@@ -166,8 +155,8 @@ public class UserDbStorage implements UserStorage {
         if (id == null) {
             return friends;
         }
-        String sqlQueryGetFriends = "select u.* from userFriends t left join users u on t.friendsId = u.id" +
-                " where t.userId = ?";
+        String sqlQueryGetFriends = "SELECT u.* FROM userFriends f LEFT JOIN users u ON f.friendsId = u.id" +
+                " WHERE f.userId = ?";
         try {
             friends = jdbcTemplate.query(sqlQueryGetFriends, this::rowMapToUser, id);
         } catch (EmptyResultDataAccessException e) {
@@ -179,8 +168,8 @@ public class UserDbStorage implements UserStorage {
     @Override
     public List<User> getCommonFriends(Long id, Long otherId) {
         List<User> commonFriends = new ArrayList<>();
-        String sqlQueryCommonFriends = "select u.* from userFriends t left join users u on t.friendsId = u.id " +
-                " where t.userId= ? and t.friendsId in (select tt.friendsId from  userFriends tt where tt.userId=?)";
+        String sqlQueryCommonFriends = "SELECT u.* FROM userFriends f LEFT JOIN users u on f.friendsId = u.id " +
+                " WHERE f.userId= ? AND f.friendsId IN (SELECT ff.friendsId FROM userFriends ff WHERE ff.userId=?)";
         try {
             commonFriends = jdbcTemplate.query(sqlQueryCommonFriends, this::rowMapToUser, id, otherId);
         } catch (EmptyResultDataAccessException e) {

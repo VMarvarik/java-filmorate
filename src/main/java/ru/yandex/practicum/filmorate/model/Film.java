@@ -2,7 +2,6 @@ package ru.yandex.practicum.filmorate.model;
 
 import lombok.*;
 import ru.yandex.practicum.filmorate.validation.customAnnotation.AfterBirthOfCinema;
-
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
@@ -12,6 +11,7 @@ import java.util.HashSet;
 import java.util.Set;
 @Data
 @Builder
+@AllArgsConstructor
 public class Film {
 
     private Long id;
@@ -35,4 +35,5 @@ public class Film {
 
     @Builder.Default
     private Set<Genre> genres = new HashSet<>();
+    private Set<Integer> likes;
 }

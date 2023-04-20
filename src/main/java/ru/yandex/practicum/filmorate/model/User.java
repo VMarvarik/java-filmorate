@@ -2,7 +2,6 @@ package ru.yandex.practicum.filmorate.model;
 
 import lombok.*;
 
-import lombok.extern.slf4j.Slf4j;
 import ru.yandex.practicum.filmorate.validation.customAnnotation.NoSpaces;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
@@ -12,7 +11,7 @@ import java.util.Set;
 
 @Data
 @Builder
-@Slf4j
+@AllArgsConstructor
 public class User {
     private Long id;
 
@@ -30,12 +29,4 @@ public class User {
     private LocalDate birthday;
 
     private Set<Long> friends;
-
-    private String nameCheck(String name, String login) {
-        if (name == null || name.isBlank() ) {
-            log.info("Логин был использован в качестве имени пользователя");
-            return login;
-        }
-        return name;
-    }
 }

@@ -12,7 +12,5 @@ public interface GenresStorage {
 
     void createGenre(Genre genre);
 
-    Boolean containsGenre(Integer genreId);
-
     Set<Genre> getGenresOfFilm(Long filmId);
 }

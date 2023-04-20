@@ -29,7 +29,7 @@ public class RatingDbStorage implements RatingStorage {
 
     @Override
     public Rating getRatingById(Integer mpaId) {
-        String sqlQueryGetById = "select * from MPARatings where ratingMPAId = ?";
+        String sqlQueryGetById = "SELECT * FROM MPARatings WHERE ratingMPAId = ?";
         Rating rating = null;
         try {
             rating = jdbcTemplate.queryForObject(sqlQueryGetById, this::rowMapToMpa, mpaId);
@@ -42,7 +42,7 @@ public class RatingDbStorage implements RatingStorage {
     @Override
     public List<Rating> getRatingAll() {
         List<Rating> ratings = new ArrayList<>();
-        String sqlQueryGetAll = "select * from MPARatings";
+        String sqlQueryGetAll = "SELECT * FROM MPARatings";
         try {
             ratings = jdbcTemplate.query(sqlQueryGetAll, this::rowMapToMpa);
         } catch (EmptyResultDataAccessException e) {

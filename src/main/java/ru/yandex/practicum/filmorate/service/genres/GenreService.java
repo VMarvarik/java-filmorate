@@ -22,7 +22,7 @@ public class GenreService {
     }
 
     public Genre getGenreById(Integer genreId) {
-        if (!genresStorage.containsGenre(genreId)) {
+        if (genresStorage.getGenreById(genreId) != null) {
             log.info("Жанр с id " + genreId + " не найден");
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
