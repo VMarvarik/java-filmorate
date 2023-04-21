@@ -26,6 +26,7 @@ public class LikesDbStorage implements LikesStorage {
         List<Integer> likes = jdbcTemplate.queryForList(sqlQuery, Integer.class, filmId);
         return new HashSet<>(likes);
     }
+
     @Override
     public void removeLike(Long idFilm, Long userId) {
         String sqlQueryRemoveLike = "DELETE FROM filmLikes WHERE filmId = ? AND userId = ?";
