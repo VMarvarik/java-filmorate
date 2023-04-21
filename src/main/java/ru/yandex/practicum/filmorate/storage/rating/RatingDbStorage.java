@@ -6,6 +6,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.Rating;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -14,12 +15,14 @@ import java.util.List;
 @Slf4j
 @Component("RatingDbStorage")
 public class RatingDbStorage implements RatingStorage {
+
     private final JdbcTemplate jdbcTemplate;
 
     @Autowired
     public RatingDbStorage(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
+
     private Rating rowMapToMpa(ResultSet resultSet, int i) throws SQLException {
         return Rating.builder()
                 .id(resultSet.getInt("ratingMPAId"))
