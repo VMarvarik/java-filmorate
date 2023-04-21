@@ -7,7 +7,8 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
-import java.util.LinkedHashSet;
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
 @Builder
@@ -33,5 +34,7 @@ public class Film {
     @NotNull
     private Rating rating;
 
-    private LinkedHashSet<Genre> genres;
+    private Set<Genre> genres;
+    
+    private Set<Integer> likes;
 }
