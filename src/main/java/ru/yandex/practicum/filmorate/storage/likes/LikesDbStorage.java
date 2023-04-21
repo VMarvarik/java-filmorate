@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
+
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -62,8 +63,8 @@ public class LikesDbStorage implements LikesStorage {
     public Set<Long> getTopFilmLikes() {
         String sqlQueryTopFilmLikes =
                 "SELECT t.id FROM films t LEFT JOIN " +
-                "(SELECT filmId as id, count(userId) AS count FROM filmLikes GROUP BY filmId) AS cn ON t.id = cn.id " +
-                "ORDER BY (COALESCE(t.RATE, 0) + COALESCE(cn.count, 0)) desc";
+                        "(SELECT filmId as id, count(userId) AS count FROM filmLikes GROUP BY filmId) AS cn ON t.id = cn.id " +
+                        "ORDER BY (COALESCE(t.RATE, 0) + COALESCE(cn.count, 0)) desc";
         return new LinkedHashSet<>(jdbcTemplate.queryForList(sqlQueryTopFilmLikes, Long.class));
     }
 }
