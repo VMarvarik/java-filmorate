@@ -32,7 +32,7 @@ public class FilmDbStorageTest {
                 .description("testtest")
                 .releaseDate(LocalDate.of(2023, 1, 1))
                 .duration(100)
-                .MPA(MPA.builder().id(1).build())
+                .mpa(MPA.builder().id(1).build())
                 .build();
         if (filmStorage.getById(1L).isPresent()) {
             filmStorage.add(filmTestBeforeEach);
@@ -59,7 +59,7 @@ public class FilmDbStorageTest {
                 .description("des_test_update")
                 .releaseDate(LocalDate.of(2020, 1, 1))
                 .duration(10)
-                .MPA(MPA.builder().id(1).build())
+                .mpa(MPA.builder().id(1).build())
                 .build();
         filmStorage.update(update);
         Optional<Film> filmOptional = filmStorage.getById(1L);
@@ -77,7 +77,7 @@ public class FilmDbStorageTest {
                 .description("des_test_update")
                 .releaseDate(LocalDate.of(2020, 1, 1))
                 .duration(10)
-                .MPA(MPA.builder().id(1).build())
+                .mpa(MPA.builder().id(1).build())
                 .build();
         filmStorage.update(update);
         Optional<Film> film = filmStorage.getById(2L);
@@ -93,7 +93,7 @@ public class FilmDbStorageTest {
                 .description("des_test_update")
                 .releaseDate(LocalDate.of(2020, 1, 1))
                 .duration(10)
-                .MPA(MPA.builder().id(1).build())
+                .mpa(MPA.builder().id(1).build())
                 .build();
         filmStorage.add(filmTestDelete);
         filmStorage.delete(filmTestDelete.getId());
@@ -110,7 +110,7 @@ public class FilmDbStorageTest {
                 .description("des_test")
                 .releaseDate(LocalDate.of(2020, 1, 1))
                 .duration(10)
-                .MPA(MPA.builder().id(1).build())
+                .mpa(MPA.builder().id(1).build())
                 .build();
         filmStorage.delete(filmTestDelete.getId());
         Optional<Film> film = filmStorage.getById(2L);
@@ -126,7 +126,7 @@ public class FilmDbStorageTest {
                 .description("des_test")
                 .releaseDate(LocalDate.of(2020, 1, 1))
                 .duration(10)
-                .MPA(MPA.builder().id(1).build())
+                .mpa(MPA.builder().id(1).build())
                 .build();
         filmStorage.add(filmTestGetAll);
         List<Film> result = (List<Film>) filmStorage.getAll();

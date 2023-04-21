@@ -33,7 +33,7 @@ public class FilmDbStorage implements FilmStorage {
                 .description(rs.getString("description"))
                 .releaseDate(rs.getDate("releaseDate").toLocalDate())
                 .duration(rs.getInt("duration"))
-                .MPA(ratingStorage.getRatingById(rs.getInt("ratingMPAId")).orElse(null))
+                .mpa(ratingStorage.getRatingById(rs.getInt("ratingMPAId")).orElse(null))
                 .genres(getGenresOfFilm(filmId))
                 .build();
         film.setId(filmId);
@@ -71,7 +71,7 @@ public class FilmDbStorage implements FilmStorage {
             stmt.setString(2, film.getDescription());
             stmt.setDate(3, Date.valueOf(film.getReleaseDate()));
             stmt.setInt(4, film.getDuration());
-            stmt.setInt(5, film.getMPA().getId());
+            stmt.setInt(5, film.getMpa().getId());
             return stmt;
         }, keyHolder);
 
@@ -112,7 +112,7 @@ public class FilmDbStorage implements FilmStorage {
                 film.getDescription(),
                 Date.valueOf(film.getReleaseDate()),
                 film.getDuration(),
-                film.getMPA().getId(),
+                film.getMpa().getId(),
                 film.getId());
 
         if (updatedRowsCount == 0) {

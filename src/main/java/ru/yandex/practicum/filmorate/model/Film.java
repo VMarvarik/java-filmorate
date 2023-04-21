@@ -30,7 +30,7 @@ public class Film {
     @Positive(message = "duration не может быть отрицательным значением")
     private int duration;
 
-    private MPA MPA;
+    private MPA mpa;
 
     private double rate;
 
