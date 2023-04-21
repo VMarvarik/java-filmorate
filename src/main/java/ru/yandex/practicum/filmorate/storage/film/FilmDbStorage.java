@@ -35,7 +35,6 @@ public class FilmDbStorage implements FilmStorage {
                 .duration(rs.getInt("duration"))
                 .rating(ratingStorage.getRatingById(rs.getInt("ratingMPAId")))
                 .genres(genreStorage.getGenresOfFilm(filmId))
-                .likes(likesStorage.getLikesByFilmId(filmId))
                 .build();
         film.setId(filmId);
         return film;

@@ -55,8 +55,8 @@ public class GenresDbStorage implements GenresStorage {
     }
 
     @Override
-    public Set<Genre> getGenresOfFilm(Long filmId) {
-        Set<Genre> genres = new LinkedHashSet<>();
+    public LinkedHashSet<Genre> getGenresOfFilm(Long filmId) {
+        LinkedHashSet<Genre> genres = new LinkedHashSet<>();
         String sqlQueryGetGenres = "SELECT gn.genreId, gn.genre " +
                 "FROM genre g LEFT JOIN genreNames gn ON g.genreId = gn.genreId " +
                 "WHERE g.filmId = ?";

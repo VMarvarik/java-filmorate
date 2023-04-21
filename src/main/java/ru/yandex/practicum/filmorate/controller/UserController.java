@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.user.UserService;
+
 import javax.validation.Valid;
 import java.util.Collection;
 
@@ -46,7 +47,7 @@ public class UserController {
         return userService.getUserById(id);
     }
 
-    @GetMapping(value = "/{id}/friends" )
+    @GetMapping(value = "/{id}/friends")
     public Collection<User> getFriends(@Valid @PathVariable Long id) {
         log.info("Вызов друзей пользователя" + id + "...");
         return userService.getListOfFriends(id);
