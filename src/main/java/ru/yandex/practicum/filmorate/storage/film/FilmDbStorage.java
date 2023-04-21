@@ -24,8 +24,6 @@ public class FilmDbStorage implements FilmStorage {
     private final GenresStorage genreStorage;
     private final RatingStorage ratingStorage;
 
-    private final LikesStorage likesStorage;
-
     private Film rowMapFilm(ResultSet rs) throws SQLException {
         Long filmId = rs.getLong("id");
         Film film = Film.builder()

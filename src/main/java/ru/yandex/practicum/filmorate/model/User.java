@@ -1,9 +1,7 @@
 package ru.yandex.practicum.filmorate.model;
 
 import lombok.*;
-
 import ru.yandex.practicum.filmorate.validation.customAnnotation.NoSpaces;
-
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.PastOrPresent;
