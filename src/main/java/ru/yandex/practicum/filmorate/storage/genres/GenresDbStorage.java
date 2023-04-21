@@ -6,9 +6,11 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.Genre;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Component("GenresDbStorage")
 @Slf4j
@@ -50,20 +52,6 @@ public class GenresDbStorage implements GenresStorage {
             genres = jdbcTemplate.query(sqlQueryGetAllGenres, this::rowMapToGenre);
         } catch (EmptyResultDataAccessException e) {
             log.info("В базе нет информации по запросу {}", sqlQueryGetAllGenres);
-        }
-        return genres;
-    }
-
-    @Override
-    public LinkedHashSet<Genre> getGenresOfFilm(Long filmId) {
-        LinkedHashSet<Genre> genres = new LinkedHashSet<>();
-        String sqlQueryGetGenres = "SELECT gn.genreId, gn.genre " +
-                "FROM genre g LEFT JOIN genreNames gn ON g.genreId = gn.genreId " +
-                "WHERE g.filmId = ?";
-        try {
-            genres.addAll(jdbcTemplate.query(sqlQueryGetGenres, this::rowMapToGenre, filmId));
-        } catch (EmptyResultDataAccessException e) {
-            log.info("В базе нет информации по запросу {}. id film = {}", sqlQueryGetGenres, filmId);
         }
         return genres;
     }

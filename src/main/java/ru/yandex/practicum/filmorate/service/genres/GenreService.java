@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.storage.genres.GenresStorage;
+
 import java.util.List;
 
 @Service("GenreService")
@@ -22,7 +23,7 @@ public class GenreService {
     }
 
     public Genre getGenreById(Integer genreId) {
-        if (genresStorage.getGenreById(genreId) != null) {
+        if (genresStorage.getGenreById(genreId) == null) {
             log.info("Жанр с id " + genreId + " не найден");
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }

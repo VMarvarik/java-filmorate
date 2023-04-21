@@ -6,9 +6,11 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
-import ru.yandex.practicum.filmorate.model.Rating;
+import ru.yandex.practicum.filmorate.model.MPA;
 import ru.yandex.practicum.filmorate.storage.rating.RatingStorage;
+
 import java.util.List;
+import java.util.Optional;
 
 @Service("RatingService")
 @Slf4j
@@ -21,16 +23,14 @@ public class RatingService {
         this.ratingStorage = ratingStorage;
     }
 
-    public Rating getRatingById(Integer id) {
-        Rating rating = ratingStorage.getRatingById(id);
-        if (rating == null) {
-            log.info("Rating с id " + id + " не найден");
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+    public Optional<MPA> getRatingById(Integer id) {
+        if (ratingStorage.getRatingById(id).isPresent()) {
+            return ratingStorage.getRatingById(id);
         }
-        return rating;
+        throw new ResponseStatusException(HttpStatus.NOT_FOUND);
     }
 
-    public List<Rating> getRatingAll() {
+    public List<MPA> getRatingAll() {
         return ratingStorage.getRatingAll();
     }
 }

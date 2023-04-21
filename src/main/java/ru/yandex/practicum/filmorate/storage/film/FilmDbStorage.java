@@ -7,13 +7,16 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.storage.genres.GenresStorage;
 import ru.yandex.practicum.filmorate.storage.rating.RatingStorage;
+
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Component("FilmDbStorage")
 @Slf4j
@@ -30,8 +33,8 @@ public class FilmDbStorage implements FilmStorage {
                 .description(rs.getString("description"))
                 .releaseDate(rs.getDate("releaseDate").toLocalDate())
                 .duration(rs.getInt("duration"))
-                .rating(ratingStorage.getRatingById(rs.getInt("ratingMPAId")))
-                .genres(genreStorage.getGenresOfFilm(filmId))
+                .MPA(ratingStorage.getRatingById(rs.getInt("ratingMPAId")).orElse(null))
+                .genres(getGenresOfFilm(filmId))
                 .build();
         film.setId(filmId);
         return film;
@@ -68,7 +71,7 @@ public class FilmDbStorage implements FilmStorage {
             stmt.setString(2, film.getDescription());
             stmt.setDate(3, Date.valueOf(film.getReleaseDate()));
             stmt.setInt(4, film.getDuration());
-            stmt.setInt(5, film.getRating().getId());
+            stmt.setInt(5, film.getMPA().getId());
             return stmt;
         }, keyHolder);
 
@@ -76,9 +79,7 @@ public class FilmDbStorage implements FilmStorage {
             log.info("При добавлении фильма {} в базу данных произошла ошибка", film);
             return null;
         }
-
         Long filmId = Objects.requireNonNull(keyHolder.getKey()).longValue();
-
         if (film.getGenres() == null) {
             Film createdFilm = getById(filmId).orElse(null);
             log.info("Фильм {} добавлен в базу данных", createdFilm);
@@ -86,7 +87,7 @@ public class FilmDbStorage implements FilmStorage {
         }
 
         String genreSqlQuery =
-                "INSERT INTO genre (id, genreId) " +
+                "INSERT INTO genre (filmId, genreId) " +
                         "VALUES (?, ?)";
 
         film.getGenres().forEach(genre -> {
@@ -111,7 +112,7 @@ public class FilmDbStorage implements FilmStorage {
                 film.getDescription(),
                 Date.valueOf(film.getReleaseDate()),
                 film.getDuration(),
-                film.getRating().getId(),
+                film.getMPA().getId(),
                 film.getId());
 
         if (updatedRowsCount == 0) {
@@ -149,7 +150,14 @@ public class FilmDbStorage implements FilmStorage {
             return;
         }
         String sqlQueryDelete = "DELETE FROM films WHERE id = ?";
-        jdbcTemplate.update(sqlQueryDelete,
-                id);
+        jdbcTemplate.update(sqlQueryDelete, id);
+    }
+
+    private LinkedHashSet<Genre> getGenresOfFilm(Long filmId) {
+        String sqlQueryGetGenres = "SELECT genreId FROM genre WHERE filmId = ?";
+        return jdbcTemplate.queryForList(sqlQueryGetGenres, Integer.class, filmId)
+                .stream()
+                .map(genreStorage::getGenreById)
+                .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 }

@@ -5,12 +5,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
-import ru.yandex.practicum.filmorate.model.Rating;
+import ru.yandex.practicum.filmorate.model.MPA;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Component("RatingDbStorage")
@@ -23,34 +24,34 @@ public class RatingDbStorage implements RatingStorage {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    private Rating rowMapToMpa(ResultSet resultSet, int i) throws SQLException {
-        return Rating.builder()
+    private MPA rowMapToMpa(ResultSet resultSet, int i) throws SQLException {
+        return MPA.builder()
                 .id(resultSet.getInt("ratingMPAId"))
                 .name(resultSet.getString("name"))
                 .build();
     }
 
     @Override
-    public Rating getRatingById(Integer mpaId) {
+    public Optional<MPA> getRatingById(Integer mpaId) {
         String sqlQueryGetById = "SELECT * FROM MPARatings WHERE ratingMPAId = ?";
-        Rating rating = null;
-        try {
-            rating = jdbcTemplate.queryForObject(sqlQueryGetById, this::rowMapToMpa, mpaId);
-        } catch (EmptyResultDataAccessException e) {
-            log.info("В базе нет информации по запросу {}.  id={}", sqlQueryGetById, mpaId);
+        List<MPA> MPAS = jdbcTemplate.query(sqlQueryGetById, (rs, rowNum) -> rowMapToMpa(rs, mpaId), mpaId);
+        if (MPAS.isEmpty()) {
+            log.info("Рейтинг с идентификатором {} не найден.", mpaId);
+            return Optional.empty();
         }
-        return rating;
+        log.info("Найден рейтинг: {}", MPAS.get(0));
+        return Optional.of(MPAS.get(0));
     }
 
     @Override
-    public List<Rating> getRatingAll() {
-        List<Rating> ratings = new ArrayList<>();
+    public List<MPA> getRatingAll() {
+        List<MPA> MPAS = new ArrayList<>();
         String sqlQueryGetAll = "SELECT * FROM MPARatings";
         try {
-            ratings = jdbcTemplate.query(sqlQueryGetAll, this::rowMapToMpa);
+            MPAS = jdbcTemplate.query(sqlQueryGetAll, this::rowMapToMpa);
         } catch (EmptyResultDataAccessException e) {
             log.info("В базе нет информации по запросу {}", sqlQueryGetAll);
         }
-        return ratings;
+        return MPAS;
     }
 }
