@@ -9,6 +9,7 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.error.exception.NullException;
 import ru.yandex.practicum.filmorate.model.User;
+
 import java.sql.Date;
 import java.sql.*;
 import java.time.LocalDate;
@@ -39,7 +40,7 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public User add(User user) {
-        if (user == null){
+        if (user == null) {
             throw new NullException("Пользователь не может быть null");
         }
         if (user.getName() == null || user.getName().isBlank()) {
@@ -62,7 +63,7 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public Optional<User> update(User user) {
-        if (user == null){
+        if (user == null) {
             throw new NullException("Пользователь не может быть null");
         }
         String name;
