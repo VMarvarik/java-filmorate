@@ -82,11 +82,11 @@ public class FilmService {
     }
 
     public List<Film> getPopularFilms(Integer count) {
-        return likesStorage.getTopFilmLikes().
-                stream().
-                limit(count).
-                map(this::getFilmById).
-                collect(Collectors.toList());
+        return likesStorage.getTopFilmLikes()
+                .stream()
+                .limit(count)
+                .map(this::getFilmById)
+                .collect(Collectors.toList());
     }
 
     private boolean containsUser(Long id) {
