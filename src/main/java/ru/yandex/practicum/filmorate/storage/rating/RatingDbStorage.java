@@ -34,24 +34,24 @@ public class RatingDbStorage implements RatingStorage {
     @Override
     public Optional<MPA> getRatingById(Integer mpaId) {
         String sqlQueryGetById = "SELECT * FROM MPARatings WHERE ratingMPAId = ?";
-        List<MPA> MPAS = jdbcTemplate.query(sqlQueryGetById, (rs, rowNum) -> rowMapToMpa(rs, mpaId), mpaId);
-        if (MPAS.isEmpty()) {
+        List<MPA> mpas = jdbcTemplate.query(sqlQueryGetById, (rs, rowNum) -> rowMapToMpa(rs, mpaId), mpaId);
+        if (mpas.isEmpty()) {
             log.info("Рейтинг с идентификатором {} не найден.", mpaId);
             return Optional.empty();
         }
-        log.info("Найден рейтинг: {}", MPAS.get(0));
-        return Optional.of(MPAS.get(0));
+        log.info("Найден рейтинг: {}", mpas.get(0));
+        return Optional.of(mpas.get(0));
     }
 
     @Override
     public List<MPA> getRatingAll() {
-        List<MPA> MPAS = new ArrayList<>();
+        List<MPA> mpas = new ArrayList<>();
         String sqlQueryGetAll = "SELECT * FROM MPARatings";
         try {
-            MPAS = jdbcTemplate.query(sqlQueryGetAll, this::rowMapToMpa);
+            mpas = jdbcTemplate.query(sqlQueryGetAll, this::rowMapToMpa);
         } catch (EmptyResultDataAccessException e) {
             log.info("В базе нет информации по запросу {}", sqlQueryGetAll);
         }
-        return MPAS;
+        return mpas;
     }
 }
