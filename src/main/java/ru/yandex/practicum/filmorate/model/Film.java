@@ -1,17 +1,19 @@
 package ru.yandex.practicum.filmorate.model;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
 import ru.yandex.practicum.filmorate.validation.customAnnotation.AfterBirthOfCinema;
+
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.LinkedHashSet;
+
 @Data
 @Builder
 @AllArgsConstructor
-@RequiredArgsConstructor
 public class Film {
 
     private Long id;
@@ -28,11 +30,9 @@ public class Film {
     @Positive(message = "duration не может быть отрицательным значением")
     private int duration;
 
-    private Set<Long> likes = new HashSet<>();
+    private MPA mpa;
 
     private double rate;
 
-    public int getAmountOfLikes() {
-        return likes.size();
-    }
+    private LinkedHashSet<Genre> genres;
 }
